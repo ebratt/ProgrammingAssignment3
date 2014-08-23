@@ -46,18 +46,18 @@ rankall <- function(outcome, num = "best") {
     data2 <- data[, c(2, 7, outcomeCol)]
     
     ## rename columns for ease of future reference
-    colnames(data2) <- c("Hospital", "State", "Outcome")
+    colnames(data2) <- c("hospital", "state", "Outcome")
     
     ## order the data by outcome and hospital name
-    data3 <- data2[order(data2$Outcome, data2$Hospital), ]
+    data3 <- data2[order(data2$Outcome, data2$hospital), ]
     
     ## remove non-numeric data in outcome column
     data4 <- subset(data3, !(Outcome == 'Not Available'))
     
     ## helper function to select the "rank"ed hospital name and state
-    getHospitalForState <- function(state) {
+    getHospitalForState <- function(my_state) {
         returnData <- {
-            data5 <- subset(data4, data4$State == state)
+            data5 <- subset(data4, data4$state == my_state)
             if (rank == "best") {
                data5[1, c(1, 2)]
             }
@@ -65,7 +65,7 @@ rankall <- function(outcome, num = "best") {
                 data5[nrow(data5), c(1, 2)]
             }
             else if (rank > nrow(data5)) {
-                data.frame(Hospital = NA, State = state)
+                data.frame(hospital = NA, state = my_state)
             }
             else {
                 data5[rank, c(1, 2)]
@@ -77,8 +77,8 @@ rankall <- function(outcome, num = "best") {
     ## loop over states and rbind them together using helper function
     states <- sort(unique(data[, 7]))
     returnValue <- data.frame(NULL)
-    for (state in states) {
-        returnValue <- rbind(returnValue, getHospitalForState(state))
+    for (each_state in states) {
+        returnValue <- rbind(returnValue, getHospitalForState(each_state))
     }
     returnValue
 }
